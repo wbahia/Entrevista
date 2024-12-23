@@ -16,11 +16,11 @@ namespace Business
             _repository = repository;
         }
 
-        public async Task ComprarAsync(int cliente, string ticker, int qdte)
+        public async Task ComprarAsync(int clienteID, string ticker, int qdte)
         {
             try
             {
-                var posicaoConsolidada = await _repository.GetByIdAsync(cliente);
+                var posicaoConsolidada = await _repository.GetByIdAsync(clienteID);
 
                 CalculoFinanceiro(posicaoConsolidada, ticker, qdte);
                 CalculoCustodia(posicaoConsolidada, ticker, qdte);

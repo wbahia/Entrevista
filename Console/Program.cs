@@ -12,7 +12,7 @@ namespace Console
             ICustodiaRepository repository = new CustodiaRepository();
             IOrquestradorDeCalculo bo = new OrquestradorDeCalculo(repository);
 
-            var posicaoCliente = repository.GetByIdAsync(1);
+            var posicaoCliente = await repository.GetByIdAsync(1);
 
             var json = JsonConvert.SerializeObject(posicaoCliente);
             System.Console.WriteLine($"POSIÇÃO INICIAL");
