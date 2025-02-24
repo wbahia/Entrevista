@@ -1,6 +1,7 @@
 ﻿using Business;
 using Newtonsoft.Json;
 using Repository;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Console
@@ -10,7 +11,8 @@ namespace Console
         static async Task Main(string[] args)
         {
             ICustodiaRepository repository = new CustodiaRepository();
-            IOrquestradorDeCalculo bo = new OrquestradorDeCalculo(repository);
+            List<INotificacaoObserver> observers = new List<INotificacaoObserver>();
+            IOrquestradorDeCalculo bo = new OrquestradorDeCalculo(repository, observers);
 
             var posicaoCliente = await repository.GetByIdAsync(1);
 

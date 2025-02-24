@@ -12,7 +12,7 @@ namespace Business
         private readonly ICustodiaRepository _repository;
         private readonly List<INotificacaoObserver> _observers;
 
-        public OrquestradorDeCalculo(ICustodiaRepository repository)
+        public OrquestradorDeCalculo(ICustodiaRepository repository, IEnumerable<INotificacaoObserver> observers)
         {
             _repository = repository;
             _observers = new List<INotificacaoObserver>();
@@ -72,7 +72,15 @@ namespace Business
         {
             foreach (var observer in _observers)
             {
-                await observer.NotificarAsync(posicaoConsolidada);
+                try
+                {
+                    await observer.NotificarAsync(posicaoConsolidada);
+                }
+                catch (Exception ex)
+                {
+                    // Log exception or handle it accordingly
+                    Console.WriteLine($"Erro ao notificar observador: {ex.Message}");
+                }
             }
         }
     }
