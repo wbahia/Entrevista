@@ -1,7 +1,7 @@
 ﻿using Domain;
-using Newtonsoft.Json;
 using Repository;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -10,10 +10,26 @@ namespace Business
     public class OrquestradorDeCalculo : IOrquestradorDeCalculo
     {
         private readonly ICustodiaRepository _repository;
+        private readonly List<INotificacaoObserver> _observers;
 
         public OrquestradorDeCalculo(ICustodiaRepository repository)
         {
             _repository = repository;
+            _observers = new List<INotificacaoObserver>();
+
+            // Adicionando os observadores
+            AdicionarObserver(new NotificacaoCliente());
+            AdicionarObserver(new NotificacaoToro());
+        }
+
+        public void AdicionarObserver(INotificacaoObserver observer)
+        {
+            _observers.Add(observer);
+        }
+
+        public void RemoverObserver(INotificacaoObserver observer)
+        {
+            _observers.Remove(observer);
         }
 
         public async Task ComprarAsync(int clienteID, string ticker, int qdte)
@@ -25,8 +41,7 @@ namespace Business
                 CalculoFinanceiro(posicaoConsolidada, ticker, qdte);
                 CalculoCustodia(posicaoConsolidada, ticker, qdte);
 
-                await NotificarCliente(posicaoConsolidada);
-                await NotificarToro(posicaoConsolidada);
+                await NotificarObservers(posicaoConsolidada);
             }
             catch (Exception ex)
             {
@@ -53,26 +68,12 @@ namespace Business
             Console.WriteLine(ex.Message);
         }
 
-        private async Task NotificarCliente(PosicaoConsolidada posicaoConsolidada)
+        private async Task NotificarObservers(PosicaoConsolidada posicaoConsolidada)
         {
-            await Task.Run(() =>
+            foreach (var observer in _observers)
             {
-                var json = JsonConvert.SerializeObject(posicaoConsolidada);
-                Console.WriteLine();
-                Console.WriteLine("Notificação CLIENTE");
-                Console.WriteLine($"{json}");
-            });
-        }
-
-        private async Task NotificarToro(PosicaoConsolidada posicaoConsolidada)
-        {
-            await Task.Run(() =>
-            {
-                var json = JsonConvert.SerializeObject(posicaoConsolidada);
-                Console.WriteLine();
-                Console.WriteLine("Notificação TORO");
-                Console.WriteLine($"{json}");
-            });
+                await observer.NotificarAsync(posicaoConsolidada);
+            }
         }
     }
 }

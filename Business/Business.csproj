@@ -44,7 +44,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="INotificacaoObserver.cs" />
     <Compile Include="IOrquestradorDeCalculo.cs" />
+    <Compile Include="NotificacaoCliente.cs" />
+    <Compile Include="NotificacaoToro.cs" />
     <Compile Include="OrquestradorDeCalculo.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
